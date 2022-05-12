@@ -7,7 +7,7 @@ pkgbase=linux-aarch64
 _srcname=linux-5.17
 _kernelname=${pkgbase#linux}
 _desc="AArch64 multi-platform"
-pkgver=5.17.1
+pkgver=5.17.6
 pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
@@ -18,6 +18,8 @@ source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "http://www.kernel.org/pub/linux/kernel/v5.x/patch-${pkgver}.xz"
         '0001-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch'
         '0002-arm64-dts-rockchip-disable-pwm0-on-rk3399-firefly.patch'
+	'0003-arm64-dts-amlogic-s905l3a-e900v22c.patch'
+	'0004-drivers-gpu-drm-meson-fix-hdmi-frequency-out-of-range.patch'
         'config'
         'generate_chromebook_its.sh'
         'kernel.keyblock'
@@ -26,9 +28,11 @@ source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         '60-linux.hook'
         '90-linux.hook')
 md5sums=('07321a70a48d062cebd0358132f11771'
-         '5a015eeaa9a3bf5bea84290f54ccf48d'
+         '7ce7d9536f1b70b8190f2675cd03ee5b'
          '91d1298599aa31b10f1f3954a450b6c3'
          '3b781286c0b97cec552ad6c8a7a019dd'
+	 '5fac4c6acfe355c1d88bb1507c8f3e16'
+	 'c31b43aa9344cc02959dec29e9545ff7'
          'c9ab067d6872140eb73bf2d16739fe05'
          '7c97cf141750ad810235b1ad06eb9f75'
          '61c5ff73c136ed07a7aadbf58db3d96a'
@@ -51,6 +55,8 @@ prepare() {
   # ALARM patches
   git apply ../0001-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
   git apply ../0002-arm64-dts-rockchip-disable-pwm0-on-rk3399-firefly.patch
+  git apply ../0003-arm64-dts-amlogic-s905l3a-e900v22c.patch
+  git apply ../0004-drivers-gpu-drm-meson-fix-hdmi-frequency-out-of-range.patch
 
   cat "${srcdir}/config" > ./.config
 }
