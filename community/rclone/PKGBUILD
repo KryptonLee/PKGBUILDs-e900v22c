@@ -6,7 +6,7 @@
 #  - remove rclone.1 MANUAL.html and MANUAL.txt targets from make in build()
 
 pkgname=rclone
-pkgver=1.58.1
+pkgver=1.59.1
 pkgrel=1
 pkgdesc="Sync files to and from Google Drive, S3, Swift, Cloudfiles, Dropbox and Google Cloud Storage"
 arch=('x86_64')
@@ -16,7 +16,7 @@ depends=('glibc')
 optdepends=('fuse2: for rclone mount')
 makedepends=('python' 'go' 'git' 'fuse2')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/rclone/rclone/archive/v$pkgver.tar.gz")
-sha512sums=('104ff2e743374ad3d0f3c517e34ac068d6439445732bc3ce4ffe8fbc13e7d2b4285518e8037c5600589425e001c26e334c7e31d12f9a476af958cb47097c4e00')
+sha512sums=('34a8e43ca2d72e4b481dcd42d5b9af039eef639dba76a07db1b4cb5011fb4aeff8a1b369832d0cb9bdd7aacd2be2a6db1776157a73bd44bfa872b2e10c1c4bd8')
 
 prepare() {
   cd "rclone-$pkgver"

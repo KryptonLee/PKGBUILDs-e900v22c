@@ -13,8 +13,8 @@ pkgname=(
   'kodi-rpi-git-eventclients' 'kodi-rpi-git-tools-texturepacker' 'kodi-rpi-git-dev'
 )
 
-_commitnumber=60319
-_commit=455209508ffdb2ea3af1898b6b18db2fe4297495
+_commitnumber=60813
+_commit=c0d8b6f15348aa68ed854bd476ae5d3837949049
 
 # set this to anything to build with clang
 # recommend manually setting -DUSE_LTO=OFF to -DUSE_LTO=$(nproc) in build()
@@ -23,7 +23,7 @@ _clangbuild=
 pkgver="20.x.$_commitnumber.${_commit:0:10}"
 pkgrel=1
 arch=('armv7h' 'aarch64')
-url="https://github.com/graysky2/xbmc/tree/gs-gbm_nexus-v4"
+url="https://github.com/graysky2/xbmc/tree/gs-gbm_nexus-v2"
 license=('GPL2')
 makedepends=(
   'afpfs-ng' 'bluez-libs' 'cmake' 'curl' 'dav1d' 'doxygen' 'git' 'glew'
@@ -34,21 +34,20 @@ makedepends=(
   'python-pycryptodomex' 'python-pillow' 'python-pybluez'
   'python-simplejson' 'shairplay' 'smbclient' 'taglib' 'tinyxml' 'swig'
   'upower' 'giflib' 'rapidjson' 'ghostscript' 'meson' 'gtest' 'graphviz'
-  'libinput' 'libxkbcommon'
+  'libinput' 'libxkbcommon' 'flatbuffers'
 )
 [[ -n "$_clangbuild" ]] && makedepends+=('clang' 'lld' 'llvm')
 
 _codename=Nexus
 _init_version=1.136
-_libdvdcss_version="1.4.2-Leia-Beta-5"
-_libdvdnav_version="6.0.0-Leia-Alpha-3"
-_libdvdread_version="6.0.0-Leia-Alpha-3"
+_libdvdcss_version="1.4.3-Next-Nexus-Alpha2-2"
+_libdvdnav_version="6.1.1-Next-Nexus-Alpha2-2"
+_libdvdread_version="6.1.3-Next-Nexus-Alpha2-2"
 _ffmpeg_version="4.4.1-Nexus-Alpha1"
 _fmt_version="8.0.1"
 _spdlog_version="1.9.2"
 _crossguid_version="ca1bf4b810e2d188d04cb6286f957008ee1b7681"
 _fstrcmp_version="0.7.D001"
-_flatbuffers_version="2.0.0"
 _libudfread_version="1.1.2"
 _name="gbm_nexus-$pkgver-$_codename"
 source=(
@@ -60,7 +59,6 @@ source=(
   "http://mirrors.kodi.tv/build-deps/sources/fmt-$_fmt_version.tar.gz"
   "http://mirrors.kodi.tv/build-deps/sources/crossguid-$_crossguid_version.tar.gz"
   "http://mirrors.kodi.tv/build-deps/sources/fstrcmp-$_fstrcmp_version.tar.gz"
-  "http://mirrors.kodi.tv/build-deps/sources/flatbuffers-$_flatbuffers_version.tar.gz"
   "http://mirrors.kodi.tv/build-deps/sources/spdlog-$_spdlog_version.tar.gz"
   "http://mirrors.kodi.tv/build-deps/sources/libudfread-$_libudfread_version.tar.gz"
   "ArchARM-kodi-init-v$_init_version.tar.gz::https://github.com/graysky2/kodi-standalone-service/archive/v$_init_version.tar.gz"
@@ -78,24 +76,22 @@ noextract=(
   "spdlog-$_spdlog_version.tar.gz"
   "crossguid-$_crossguid_version.tar.gz"
   "fstrcmp-$_fstrcmp_version.tar.gz"
-  "flatbuffers-$_flatbuffers_version.tar.gz"
   "libudfread-$_libudfread_version.tar.gz"
 )
-sha256sums=('466ce3a1044ba17ad05f893fa501b49f8f29ecc417091956293910212ead3ae3'
-            '38816f8373e243bc5950449b4f3b18938c4e1c59348e3411e23f31db4072e40d'
-            '071e414e61b795f2ff9015b21a85fc009dde967f27780d23092643916538a57a'
-            'a30b6aa0aad0f2c505bc77948af2d5531a80b6e68112addb4c123fca24d5d3bf'
+sha256sums=('9a2db5d1fe4ecabcf668e255e9d238487accbce7ae4faa93843bbcc1e370b685'
+            'f38c4a4e7a4f4da6d8e83b8852489aa3bb6588a915dc41f5ee89d9aad305a06e'
+            '584f62a3896794408d46368e2ecf2c6217ab9c676ce85921b2d68b8961f49dfc'
+            '719130091e3adc9725ba72df808f24a14737a009dca5a4c38c601c0c76449b62'
             'abbce62231baffe237e412689c71ffe01bfc83135afd375f1e538caae87729ed'
             'b06ca3130158c625848f3fb7418f235155a4d389b2abc3a6245fb01cb0eb1e01'
             '6be27e0b3a4907f0cd3cfadec255ee1b925569e1bd06e67a4d2f4267299b69c4'
             'e4018e850f80700acee8da296e56e15b1eef711ab15157e542e7d7e1237c3476'
-            '9ddb9031798f4f8754d00fca2f1a68ecf9d0f83dfac7239af1311e4fd9a565c4'
             '6fff9215f5cb81760be4cc16d033526d1080427d236e86d70bb02994f85e3d38'
             '2bf16726ac98d093156195bb049a663e07d3323e079c26912546f4e05c77bac5'
             'b94c70baa45e30346224ceecfab031dd183e09303b1f97d6522f9941da9b0067'
-            '23f105f914f3372afa432251b69c7601e50c22d1a88168185105ee859005f5cd'
+            '92d063169017bf9e1770d8a7cce77c0c55d197692d10820a7e4aecad9e58178c'
             '16d6c79ff3a3d3653f21d77a36326a0335c8cec49a9c06dbc2de0ed143e50a9f'
-            '7b9ac44b29462418a3e4bb038995960e5122840048a6f592a7d6a39bbc74a4a6')
+            '9c58877a1622d582e72f76940848dd19a6999c3e1d814abb79c6d35b6acad908')
 
 prepare() {
   [[ -d kodi-build ]] && rm -rf kodi-build
@@ -152,7 +148,6 @@ build() {
     -DENABLE_INTERNAL_SPDLOG=ON
     -DENABLE_INTERNAL_CROSSGUID=ON
     -DENABLE_INTERNAL_FSTRCMP=ON
-    -DENABLE_INTERNAL_FLATBUFFERS=ON
     -DENABLE_INTERNAL_UDFREAD=ON
     -DENABLE_MYSQLCLIENT=ON
     -DENABLE_VAAPI=OFF
@@ -165,7 +160,6 @@ build() {
     -DSPDLOG_URL="$srcdir/spdlog-$_spdlog_version.tar.gz"
     -DCROSSGUID_URL="$srcdir/crossguid-$_crossguid_version.tar.gz"
     -DFSTRCMP_URL="$srcdir/fstrcmp-$_fstrcmp_version.tar.gz"
-    -DFLATBUFFERS_URL="$srcdir/flatbuffers-$_flatbuffers_version.tar.gz"
     -DUDFREAD_URL="$srcdir/libudfread-$_libudfread_version.tar.gz"
     -DVERBOSE=ON
     -DAPP_RENDER_SYSTEM=gles
@@ -184,7 +178,7 @@ package_kodi-rpi-git() {
     'libplist' 'libpulse' 'libxslt' 'lirc' 'mariadb-libs' 'mesa'
     'python-pillow' 'python-pycryptodomex' 'python-simplejson'
     'shairplay' 'smbclient' 'sqlite' 'taglib' 'tinyxml'
-    'libinput' 'libxkbcommon' 'polkit' 'linux>=5.4.35'
+    'libinput' 'libxkbcommon' 'polkit' 'linux>=5.4.35' 'lzo' 'flatbuffers'
   )
   [[ -n "$_clangbuild" ]] && depends+=('glu')
 

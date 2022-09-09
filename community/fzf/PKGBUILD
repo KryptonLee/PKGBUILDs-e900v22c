@@ -11,8 +11,8 @@
 #  - generalize arch-dependent install line
 
 pkgname=fzf
-pkgver=0.30.0
-pkgrel=2
+pkgver=0.32.1
+pkgrel=1
 pkgdesc='Command-line fuzzy finder'
 arch=('x86_64')
 url='https://github.com/junegunn/fzf'

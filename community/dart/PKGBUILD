@@ -9,10 +9,9 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - added source and sha512 for ARMv7h, AArch64 builds of Dart
-#  - configure paths and install symlinks for binaries shipped for arm
 
 pkgname=dart
-pkgver=2.16.2
+pkgver=2.17.6
 pkgrel=1
 pkgdesc='The dart programming language SDK'
 arch=('x86_64' 'armv7h' 'aarch64')
@@ -24,9 +23,9 @@ options=('!strip')
 source_x86_64+=("$pkgname-$pkgver-64.zip::https://storage.googleapis.com/dart-archive/channels/stable/release/$pkgver/sdk/dartsdk-linux-x64-release.zip")
 source_armv7h+=("$pkgname-$pkgver-arm.zip::https://storage.googleapis.com/dart-archive/channels/stable/release/$pkgver/sdk/dartsdk-linux-arm-release.zip")
 source_aarch64+=("$pkgname-$pkgver-arm64.zip::https://storage.googleapis.com/dart-archive/channels/stable/release/$pkgver/sdk/dartsdk-linux-arm64-release.zip")
-sha512sums_x86_64=('fa292a5d2a912b1e5b66e8154d7553f5581312f7785e7ab8e035ebc7908afd282f85b69a2a9be4ae00f55db73d6e6e5ba3260df0216f957441d1b8164652cb39')
-sha512sums_armv7h=('c6cf14b412c5ed97ae17ad04d3552ad0897ba387ead096388d1ad054a0a5f3f28ff4387a5b85b57118c4520f16c60c7a59893c6a24333ce7f462dfad3d503bcc')
-sha512sums_aarch64=('743385210fd01f4d2e98601651159ebcf869bc4db7f730068929902d1c070947aacafcacecc9d4eb6a2648b314b4f5a9722424b96c38d86203f5dc519d454e57')
+sha512sums_x86_64=('6712b6e3691dc241846f8c1353d2bd88cd24c4b37bca3050266cc88e119f9ab5a041aee896db43f00c73ecf93bf8078fe1159b832717465263e188744e874b24')
+sha512sums_armv7h=('0d2cd52861ba85d5d902aab63127bd3e85b3523f60e73fd2e5e9e1cfcf1a46e4eff436c284f68921832d02c91b6a71d85218e96a10cfc9a20e83e7fc1176347b')
+sha512sums_aarch64=('d3feb1a2cf8804dc235652a07e0a5b3eb7a6f1fcc2c4dbf038ca7d2e885c4fad6382613d0239e55eb8dda6e034d8ea71fbca81d8d4dcc9687d8888b9243882f2')
 
 prepare() {
   # Fix permissions
@@ -36,7 +35,7 @@ prepare() {
   cd "$pkgname-sdk/bin"
 
   # Configure paths
-  for _f in dartanalyzer pub dartdoc; do
+  for _f in dart2js dartdevc; do
     setconf $_f BIN_DIR "/opt/$pkgname-sdk/bin"
     setconf $_f PROG_NAME "/opt/$pkgname-sdk/bin/$_f"
     setconf $_f SDK_DIR "/opt/$pkgname-sdk/"
@@ -54,7 +53,7 @@ package() {
   cp -a "$pkgname-sdk/"* "$pkgdir/opt/$pkgname-sdk/"
 
   # Set up symbolic links for the executables
-  for f in dart dartanalyzer pub dartdoc dartaotruntime; do
+  for f in dart dart2js dartdevc dartaotruntime; do
     ln -s "/opt/$pkgname-sdk/bin/$f" "$pkgdir/usr/bin/$f"
   done
 

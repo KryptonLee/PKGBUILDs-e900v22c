@@ -10,20 +10,21 @@
 #  - build v6/v7 with -j2 - RAM constraints
 #  - set llvm-config in config.toml for ARM architectures
 #  - set debuginfo-level = 0 in config.toml - RAM constraints
+#  - build aarch64 with 16k page support
 
 highmem=1
 
 pkgbase=rust
 pkgname=(rust rust-src)
 epoch=1
-pkgver=1.60.0
-pkgrel=1
+pkgver=1.62.1
+pkgrel=1.1
 pkgdesc="Systems programming language focused on safety, speed and concurrency"
 url=https://www.rust-lang.org/
 arch=(x86_64)
 license=(MIT Apache)
 options=(!emptydirs !strip !lto)
-_llvm_ver=13.0.1
+_llvm_ver=14.0.6
 depends=(gcc-libs llvm-libs curl libssh2 gcc)
 makedepends=(rust "llvm=$_llvm_ver" libffi perl python cmake
              ninja lld)
@@ -36,17 +37,16 @@ source=(
   0002-compiler-Change-LLVM-targets.patch
   0003-compiler-Use-wasm-ld-for-wasm-targets.patch
 )
-sha256sums=('20ca826d1cf674daf8e22c4f8c4b9743af07973211c839b85839742314c838b7'
+sha256sums=('72acbe6ffcd94f598382a7430b0d85ee8f679e6d0b27f3f566ed1c16c978133f'
             'SKIP'
-            '7b33955031f9a9c5d63077dedb0f99d77e4e7c996266952c1cec55626dca5dfc'
+            '88df303840ca8fbff944e15e61c141226fe79f5d2b8e89fb024264d77841a02e'
             'SKIP'
-            '0f8cfbe0387dd62909fe9cb9523223ae1c2319494e2caf5fa4d0592198631b3e'
-            '7a69e38716957ff074c5f932a82bbea1d9a3713a3f39d9085977cdc8df336c43'
-            '2ef851be0562d13431c5c81df0161f92984e79845fe986182225f2dae58a9452'
-            'f8ea25693ba42c7e185aa8677218783fe0cd60a3370926cb6996ec898b43d691')
+            'c901a9bb036c29ca092f7dbc8b447efdd9aa1044a902a88f9d024cb22681dc19'
+            '839c342ea915ca55adaf1de5d18676ae8e7474265debde0f9e424c17abf2d51f'
+            'ae69ccf45641064c950d8f8cabf74858e0c33f3ddc069930a994d7bf327c3215'
+            '26bf232d144b81a303ed91f6a331ddf004c5d9fefd41a11e36b61812a34459aa')
 validpgpkeys=(108F66205EAEB0AAA8DD5E1C85AB96E6FA1BE5FE  # Rust Language (Tag and Release Signing Key) <rust-key@rust-lang.org>
-              474E22316ABF4785A88C6E8EA2C794A986419D8A  # Tom Stellard <tstellar@redhat.com>
-              B6C8F98282B944E3B0D5C2530FC3042E345AD05D) # Hans Wennborg <hans@chromium.org>
+              474E22316ABF4785A88C6E8EA2C794A986419D8A) # Tom Stellard <tstellar@redhat.com>
 
 prepare() {
   cd rustc-$pkgver-src
@@ -100,6 +100,9 @@ jemalloc = true
 # https://github.com/rust-lang/rust/issues/54872
 codegen-units-std = 1
 
+# musl target produces warnings
+deny-warnings = false
+
 [dist]
 compression-formats = ["gz"]
 
@@ -139,6 +142,7 @@ _pick() {
 build() {
   cd rustc-$pkgver-src
 
+  [[ $CARCH == "aarch64" ]] && export JEMALLOC_SYS_WITH_LG_PAGE=16
   export RUST_BACKTRACE=1
   export RUST_COMPILER_RT_ROOT="$srcdir/compiler-rt-$_llvm_ver.src"
   [[ -d $RUST_COMPILER_RT_ROOT ]]

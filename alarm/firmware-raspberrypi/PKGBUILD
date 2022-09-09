@@ -3,9 +3,9 @@
 # Contributor: Ray Sherwin <sliick517d@gmail.com>
 
 pkgname=firmware-raspberrypi
-_firmcommit=4db8c5d80daf2220d7824cfa6052f0bb108612ea
+_firmcommit=b0be2de82bc55d3f36a944538857d891340dbc2c
 _bluezcommit=31ad68831357d2019624004f1f0846475671088f
-pkgver=20220505
+pkgver=20220706
 pkgrel=1
 pkgdesc="Additional firmware for Raspberry Pi"
 arch=('any')
@@ -37,17 +37,26 @@ sha256sums=('SKIP'
             'f978fbc40db75ba3213a4472023496d0716706eb1a6f078f207ac027c5753f43')
 
 package() {
+  _FWPATH=firmware-nonfree/debian/config/brcm80211
+
+  # https://github.com/RPi-Distro/firmware-nonfree/issues/26
+  unlink "$srcdir/$_FWPATH/brcm/brcmfmac43455-sdio.bin"
+
   install -d "$pkgdir"/usr/lib/firmware/updates/brcm "$pkgdir"/usr/share/alsa/cards/
   install -m 0644 *.hcd "$pkgdir"/usr/lib/firmware/updates/brcm
   install -m 0644 RPi-WM8804.conf "$pkgdir"/usr/share/alsa/cards/
-  install -m 0644 "$srcdir"/firmware-nonfree/debian/config/brcm80211/brcm/* "$pkgdir"/usr/lib/firmware/updates/brcm
+  install -m 0644 "$srcdir/$_FWPATH/brcm/"* "$pkgdir"/usr/lib/firmware/updates/brcm
   rm "$pkgdir"/usr/lib/firmware/updates/brcm/{brcmfmac43430-sdio.bin,brcmfmac43430-sdio.txt}
+  install -m 0644 "$srcdir/$_FWPATH/cypress/"{cyfmac43455-sdio-*.bin,README.txt} "$pkgdir"/usr/lib/firmware/updates/brcm
 
   # make some symbolic links
   cd "$pkgdir"/usr/lib/firmware/updates/brcm
-  ln -s ./brcmfmac43456-sdio.txt ./brcmfmac43456-sdio.raspberrypi,400.txt
-  ln -s ./brcmfmac43456-sdio.txt ./brcmfmac43456-sdio.raspberrypi,4-compute-module.txt
-  ln -s ./brcmfmac43456-sdio.txt ./brcmfmac43456-sdio.pine64-pinephone-pro.txt
-  ln -s ./brcmfmac43455-sdio.raspberrypi,4-model-b.txt ./brcmfmac43455-sdio.raspberrypi,4-compute-module.txt
-  ln -s ./BCM43430B0.hcd ./BCM.hcd
+  ln -s brcmfmac43456-sdio.txt brcmfmac43456-sdio.raspberrypi,400.txt
+  ln -s brcmfmac43456-sdio.txt brcmfmac43456-sdio.raspberrypi,4-compute-module.txt
+  ln -s brcmfmac43456-sdio.txt brcmfmac43456-sdio.pine64-pinephone-pro.txt
+  ln -s brcmfmac43455-sdio.raspberrypi,4-model-b.txt brcmfmac43455-sdio.raspberrypi,4-compute-module.txt
+  ln -s BCM43430B0.hcd BCM.hcd
+
+  # see README.txt: we can use either the -standard or -minimal files so use standard by default
+  ln -s cyfmac43455-sdio-standard.bin brcmfmac43455-sdio.bin
 }

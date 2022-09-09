@@ -15,10 +15,10 @@
 highmem=1
 
 pkgname=chromium
-pkgver=101.0.4951.64
+pkgver=104.0.5112.79
 pkgrel=1
 _launcher_ver=8
-_gcc_patchset=4
+_gcc_patchset=2
 pkgdesc="A web browser built for speed, simplicity, and security"
 arch=('x86_64')
 url="https://www.chromium.org/Home"
@@ -33,30 +33,30 @@ optdepends=('pipewire: WebRTC desktop sharing under Wayland'
             'org.freedesktop.secrets: password storage backend on GNOME / Xfce'
             'kwallet: support for storing passwords in KWallet on Plasma')
 options=('!lto') # Chromium adds its own flags for ThinLTO
-source=(https://commondatastorage.googleapis.com/chromium-browser-official/$pkgname-$pkgver.tar.xz
+source=(https://commondatastorage.googleapis.com/chromium-browser-official/chromium-$pkgver.tar.xz
         https://github.com/foutrelis/chromium-launcher/archive/v$_launcher_ver/chromium-launcher-$_launcher_ver.tar.gz
         https://github.com/stha09/chromium-patches/releases/download/chromium-${pkgver%%.*}-patchset-$_gcc_patchset/chromium-${pkgver%%.*}-patchset-$_gcc_patchset.tar.xz
-        fix-no-member-named-tie-in-namespace-std.patch
-        iwyu-add-utility-for-std-exchange.patch
+        x11-ozone-fix-X11-screensaver-suspension.patch
         enable-GlobalMediaControlsCastStartStop.patch
-        chromium-libxml-unbundle.patch
-        sql-make-VirtualCursor-standard-layout-type.patch
+        roll-src-third_party-ffmpeg.patch
+        chromium-tflite-system-zlib.patch
+        remove-no-opaque-pointers-flag.patch
         use-oauth2-client-switches-as-default.patch
         0001-widevine-support-for-arm.patch
         0002-Run-blink-bindings-generation-single-threaded.patch
         0003-Fix-eu-strip-build-for-newer-GCC.patch)
-sha256sums=('9c5896e4135563453ac10d15698c18ef61eb5535dc611325b230ece4c5a8d8f7'
+sha256sums=('9cc662f1a84c796521ee17ed2808795ca937fe7f77bc605e788f0304a81dabf3'
             '213e50f48b67feb4441078d50b0fd431df34323be15be97c55302d3fdac4483a'
-            '8ed519d21ccd8b382ddd384e9c15306a60d2e3495f48a62dea07c9be9bbffebd'
-            '7ad0106161bbf25e2e603ae1a723ae4217155ebb26eb4778363ad396e8c14156'
-            '6f666ef0acb08704ca58cc0d5e97e7ce64d8fea51042e593adae1ce15a61231c'
+            'ce702099849465927cf47f7bc3a4a27045d0e35e16b17481ebf35e14506bafa7'
+            '9956a843bc8a765c130080616ccd3ebc46ea95c3a2324c4b403bc293a8705eb2'
             '779fb13f2494209d3a7f1f23a823e59b9dded601866d3ab095937a1a04e19ac6'
-            'fd3bf124aacc45f2d0a4f1dd86303fa7f2a3d4f4eeaf33854631d6cb39e12485'
-            'b94b2e88f63cfb7087486508b8139599c89f96d7a4181c61fec4b4e250ca327a'
+            '30df59a9e2d95dcb720357ec4a83d9be51e59cc5551365da4c0073e68ccdec44'
+            '588c166bf748793758a7df438cfa665b32e09ca8fbd6380be28bc5984a33523c'
+            'ab46b2c26a4dfe86486fd7e31bfc7211c515994a61a8c0cbd742f9c9e3c91873'
             'e393174d7695d0bafed69e868c5fbfecf07aa6969f3b64596d0bae8b067e1711'
-            'b05841e51807487f513f27cc85f8cbdf68306706afba2b03a5c5ad5965a29dc6'
-            '56ceefb17b73eea37525380bf8105cd0fd8fcee0979cfcd3729a78471a35b6f2'
-            '5ce5f3c9a4f76e704bb407a463587e9d71ed613478c17d3bc328e839c259bb0d')
+            '7fc0eb593ccb82ce2003ad32662e925f300a9042ef8d560ba437691c4fba12cf'
+            'a2df732e49f7395fceda3acb781b1b3fc4d2826461b772a6cc9ce9dfe9c1e33a'
+            '601c57358026bd4dd31f075b445698ccb9b730b73a50ff2b46d64b1812ebb141')
 
 # Possible replacements are listed in build/linux/unbundle/replace_gn_files.py
 # Keys are the names in the above script; values are the dependencies in Arch
@@ -94,7 +94,7 @@ depends+=(${_system_libs[@]})
 _google_api_key=AIzaSyDwr302FpOSkGRpLlUpPThNTDPbXcIn_FM
 
 prepare() {
-  cd "$srcdir/$pkgname-$pkgver"
+  cd chromium-$pkgver
 
   # Allow building against system libraries in official builds
   sed -i 's/OFFICIAL_BUILD/GOOGLE_CHROME_BUILD/' \
@@ -125,22 +125,25 @@ prepare() {
   # runtime -- this allows signing into Chromium without baked-in values
   patch -Np1 -i ../use-oauth2-client-switches-as-default.patch
 
+  # Remove '-Xclang -no-opaque-pointers' flag not supported by our clang
+  patch -Np1 -i ../remove-no-opaque-pointers-flag.patch
+
+  # Fix build with unbundled zlip (patch from Gentoo)
+  patch -Np1 -i ../chromium-tflite-system-zlib.patch
+
   # Upstream fixes
-  patch -Np1 -i ../fix-no-member-named-tie-in-namespace-std.patch
-  patch -Np1 -i ../iwyu-add-utility-for-std-exchange.patch
+  patch -Np1 -i ../x11-ozone-fix-X11-screensaver-suspension.patch
 
   # Revert kGlobalMediaControlsCastStartStop enabled by default
   # https://crbug.com/1314342
   patch -Rp1 -F3 -i ../enable-GlobalMediaControlsCastStartStop.patch
 
-  # https://chromium-review.googlesource.com/c/chromium/src/+/3488058
-  patch -Np1 -i ../chromium-libxml-unbundle.patch
-
-  # https://chromium-review.googlesource.com/c/chromium/src/+/2862724
-  patch -Np1 -i ../sql-make-VirtualCursor-standard-layout-type.patch
+  # Revert ffmpeg roll requiring new channel layout API support
+  # https://crbug.com/1325301
+  patch -Rp1 -i ../roll-src-third_party-ffmpeg.patch
 
   # Fixes for building with libstdc++ instead of libc++
-  #patch -Np1 -i ../patches/
+  patch -Np1 -i ../patches/chromium-103-VirtualCursor-std-layout.patch
 
   # Link to system tools required by the build
   mkdir -p third_party/node/linux/node-linux-x64/bin
@@ -167,7 +170,7 @@ prepare() {
 build() {
   make -C chromium-launcher-$_launcher_ver
 
-  cd "$srcdir/$pkgname-$pkgver"
+  cd chromium-$pkgver
 
   # Rebuild eu-strip
   pushd buildtools/third_party/eu-strip
@@ -251,7 +254,7 @@ package() {
   install -Dm644 LICENSE \
     "$pkgdir/usr/share/licenses/chromium/LICENSE.launcher"
 
-  cd "$srcdir/$pkgname-$pkgver"
+  cd ../chromium-$pkgver
 
   install -D out/Release/chrome "$pkgdir/usr/lib/chromium/chromium"
   install -Dm4755 out/Release/chrome_sandbox "$pkgdir/usr/lib/chromium/chrome-sandbox"
@@ -298,7 +301,6 @@ package() {
 
   cp "${toplevel_files[@]/#/out/Release/}" "$pkgdir/usr/lib/chromium/"
   install -Dm644 -t "$pkgdir/usr/lib/chromium/locales" out/Release/locales/*.pak
-  install -Dm755 -t "$pkgdir/usr/lib/chromium/swiftshader" out/Release/swiftshader/*.so
 
   for size in 24 48 64 128 256; do
     install -Dm644 "chrome/app/theme/chromium/product_logo_$size.png" \

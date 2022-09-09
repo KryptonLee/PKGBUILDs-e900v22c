@@ -1,8 +1,8 @@
 # Maintainer: graysky <therealgraysky AT protonmail DOT com>
 
 pkgname=rpi-eeprom
-_commit=51491abb9c360295625bdcf09fd9fc5658136630
-pkgver=20220428
+_commit=e4f90a89e62051ff658c40c57150d13c7e67553b
+pkgver=20220802
 pkgrel=1
 pkgdesc="Bootloader and VL805 USB controller EEPROM update tool for RPi4"
 arch=('any')
@@ -11,7 +11,7 @@ license=('custom')
 depends=(python pciutils raspberrypi-firmware coreutils binutils)
 backup=("etc/default/$pkgname-update")
 source=("$pkgname-$pkgver-${_commit:0:10}.tar.gz::https://github.com/raspberrypi/rpi-eeprom/archive/$_commit.tar.gz")
-md5sums=('ffe962b61caecf771a62d2e633fbaa40')
+md5sums=('79a279768ac5944d4a9be6fd1ef1e2d4')
 install="$pkgname.install"
 
 package() {
@@ -28,6 +28,8 @@ package() {
   install -pd "$pkgdir/usr/lib/firmware/raspberrypi/bootloader/backup"
   for target in beta critical stable; do
     cp -a "firmware/$target" "$pkgdir/usr/lib/firmware/raspberrypi/bootloader"
+    # remove old images
+    rm -f "$pkgdir/usr/lib/firmware/raspberrypi/bootloader/$target/"pieeprom-202[0,1]*.bin
   done
   ln -sf critical "$pkgdir/usr/lib/firmware/raspberrypi/bootloader/default"
   ln -sf stable "$pkgdir/usr/lib/firmware/raspberrypi/bootloader/latest"
@@ -36,4 +38,5 @@ package() {
 
   # firmware files should not be executable
   find "$pkgdir/usr/lib/firmware/raspberrypi/bootloader" -name '*.bin' -exec chmod 644 '{}' +
+
 }
