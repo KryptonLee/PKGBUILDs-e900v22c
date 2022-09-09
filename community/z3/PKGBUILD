@@ -6,18 +6,18 @@
 #  - set -DZ3_LINK_TIME_OPTIMIZATION=OFF
 
 pkgbase=z3
-pkgname=('z3' 'python-z3')
-pkgver=4.9.0
+pkgname=('z3' 'python-z3-solver')
+pkgver=4.11.0
 pkgrel=1
 pkgdesc='High-performance theorem prover'
 url='https://github.com/Z3Prover/z3'
 arch=('x86_64')
 license=('MIT')
- # 'java-environment-common' 'mono' 'ocaml' 'ocaml-findlib'
-makedepends=('glibc' 'cmake' 'ninja' 'python' 'python-setuptools' 'gcc-libs')
+makedepends=('glibc' 'cmake' 'ninja' 'python' 'python-setuptools' 'gcc-libs'
+             'python-build' 'python-installer' 'python-wheel')
 source=(https://github.com/Z3Prover/z3/archive/z3-$pkgver.tar.gz)
-sha512sums=('ddfe9901ea9fb4d23761cb6bbd534ffadaa4ba8264c8e2893b08d65f4e2e4b8aa7d824dc54e00480e9121be9b27ac42db7abcce778d86eb23465046405cc8594')
-b2sums=('97ee7f7ec6fbeddd01de0200149af6095bb9a7ba841b79320bf49fe6d34e7288a396db1fa4d4045b5fbaf33aba3046f736e8ca367ac7dade8a440302801b2ed6')
+sha512sums=('a3fd7e013948de6683b16aca03641bb845d02187152bebdee8c62c2a3f80a7710a1d3b9aef9c1490c2340571bb225f457928ac57a2ed28c0084ced34bcf3e905')
+b2sums=('5b59efdf74d5d358daf23f877a090b240909eab14bebb9f23c68c7eb7fb7f2258afc049665061f61d10c1e092382f707f094f12c20f33c7e06c7939275b231d0')
 
 build() {
   cd $pkgbase-z3-$pkgver
@@ -35,21 +35,26 @@ build() {
 package_z3() {
   depends=('glibc' 'gcc-libs')
   provides=('libz3' 'libz3.so')
+
   cd $pkgbase-z3-$pkgver
   DESTDIR="${pkgdir}" ninja -C build install
   install -Dm 644 LICENSE.txt -t "$pkgdir"/usr/share/licenses/$pkgname
   rm -r "$pkgdir"/usr/lib/python*
 }
 
-package_python-z3() {
-  depends=('python' 'z3')
+package_python-z3-solver() {
+  depends=('python' 'python-setuptools' 'z3')
+  replaces=('python-z3')
+  conflicts=('python-z3')
+
   cd $pkgbase-z3-$pkgver
   DESTDIR="${pkgdir}" ninja -C build install
   install -Dm 644 LICENSE.txt -t "$pkgdir"/usr/share/licenses/$pkgname
+
   cd "$pkgdir"
   rm -r usr/include usr/bin usr/lib/{cmake,pkgconfig,lib*}
-  python -m compileall .
-  python -O -m compileall .
+  python -m compileall -d /usr/lib "$pkgdir/usr/lib"
+  python -O -m compileall -d /usr/lib "$pkgdir/usr/lib"
 }
 
 # vim: ts=2 sw=2 et:

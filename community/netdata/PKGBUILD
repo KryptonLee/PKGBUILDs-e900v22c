@@ -5,7 +5,7 @@
 #  - disable LTO
 
 pkgname=netdata
-pkgver=1.35.1
+pkgver=1.36.1
 pkgrel=1
 pkgdesc="Real-time performance monitoring, in the greatest possible detail, over the web"
 url="https://github.com/netdata/netdata"
@@ -30,7 +30,7 @@ optdepends=('nodejs: for monitoring named and SNMP devices'
 install=$pkgname.install
 source=("$pkgname-$pkgver.tar.gz::https://github.com/netdata/netdata/releases/download/v$pkgver/netdata-v$pkgver.tar.gz"
         "$pkgname.sysusers")
-sha512sums=('43cbf099841fe2547b7de56610f811e55fdf2e9af3dc18fde818e09de1125a7f8d57f6a16f2dee8ea4b9e6f2683959549810a1ea7f8f7b5007eb7069bfddb477'
+sha512sums=('2ff01c816dbdd975450a7cebd292d9a1c6bf1822aa6efb56b846a90e5a01d1faac898e1a87b155fd6fa20f26d098e1d80042b12c0ff22b05260e14f3f552546d'
             'a910809a823ba58ca7bdaa72e8d68427b48f452c1fbb2343fa182ecb0a091a7640e73af24b8ba2fdd90e00aed8ef53b7fccd25cb8f04ca9b9fa6c8e52223ca66')
 
 build() {

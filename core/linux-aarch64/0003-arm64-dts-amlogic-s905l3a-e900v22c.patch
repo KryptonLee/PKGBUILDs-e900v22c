@@ -1,10 +1,10 @@
 diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 5148cd9e5..94b9e8595 100644
+index 8773211..d998a55 100644
 --- a/arch/arm64/boot/dts/amlogic/Makefile
 +++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -2,6 +2,7 @@
- dtb-$(CONFIG_ARCH_MESON) += meson-axg-s400.dtb
+@@ -3,6 +3,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-a1-ad401.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-axg-jethome-jethub-j100.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-axg-s400.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-g12a-radxa-zero.dtb
 +dtb-$(CONFIG_ARCH_MESON) += meson-g12a-s905l3a-e900v22c.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-g12a-sei510.dtb
@@ -12,7 +12,7 @@ index 5148cd9e5..94b9e8595 100644
  dtb-$(CONFIG_ARCH_MESON) += meson-g12a-x96-max.dtb
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-s905l3a-e900v22c.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-s905l3a-e900v22c.dts
 new file mode 100644
-index 000000000..1972fd6dd
+index 0000000..e206802
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-s905l3a-e900v22c.dts
 @@ -0,0 +1,79 @@
@@ -52,7 +52,7 @@ index 000000000..1972fd6dd
 +			led_name = "net_led";
 +			gpios = <&gpio_ao GPIOAO_9 GPIO_ACTIVE_HIGH>;
 +			default-state = "off";
-+			linux,default-trigger = "0.1:08:link";
++			linux,default-trigger = "mdio_mux-0.1:08:link";
 +		};
 +
 +		remote_led {
